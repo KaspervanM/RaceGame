@@ -104,28 +104,23 @@ def empty_room():
 	tot_time = int(time.time()) - start_time
 	print('gen {:d} completed, {:d} sec passed in total'.format(generation, tot_time))
 	top = (nCars-Human)//2
-	#print('model_scores: ', model_scores)
 	best = [(k, model_scores[k]) for k in sorted(model_scores, key=model_scores.get, reverse=True)]
-	#print('best1: ', best)
 	if all(s[1] == best[0][1] for s in best[:len(best)//2+2]) and not all(s[1] == best[0][1] for s in best):
 		best = [best[choice([s for s in range(len(best[:len(best)//2+2]))])] for x in range(top)]
 	if not all(s[1] == best[0][1] for s in best): best = best[:top]
 	print('best: ', best)
-	#print(best)
-	#print(models)
 	index = Human
 	models2 = {}
 	for i in range(nModels):
 			for x in range(100):
 				if f"{i},{x}" in models:
 					if all(f"{i},{x}" != elem[0] for elem in best):
-						print(f"{i}, {x}: {best[index%top][0]}")
+						best_model = models[f"{i},{x}"]
 						del models[f"{i},{x}"]
 						if randint(0, nCars*best[index % top][1]**1.5) == 0:
 							print('Model mutated')
 							mutated_model = generate_random_NNev_model(best_model, 1/((10+best[index % top][1])/10))
 						else:
-							#print('Weights mutated')
 							mutated_model = gen_mutant(best_model, 1/((10+best[index % top][1])/10))
 						nextx = int(best[index%top][0][2])+1
 						I = best[index%top][0][0]
@@ -136,7 +131,6 @@ def empty_room():
 						models2[f"{I},{nextx}"] = mutated_model
 						index += 1
 	models.update(models2)
-	#print(models)
 	if save_yet == 10:
 		with open(currdir+fs+'resources'+fs+'models'+fs+'gen.log', 'w') as f:
 			f.write('[{:d}, {:d}]'.format(generation, tot_time))
@@ -159,7 +153,6 @@ def collision(index):
 		car[0].NN.Interface = car[0].IFLocal
 	else:
 		model_scores[f"{car[index].IFLocal.modelindex[0]},{car[index].IFLocal.modelindex[1]}"] = car[index].score
-		#print(model_scores)
 		car[index] = None
 
 	print("boem", end='\r')
