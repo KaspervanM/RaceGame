@@ -79,7 +79,7 @@ def set_car():
 		car[0].NN.Interface = car[0].IFLocal
 
 	index = Human
-	for i in range(100):
+	for i in range(50):
 			for x in range(100):
 				if f"{i},{x}" in models:
 					car.append(Car(rotation = -90, scale=(game_window.height / 600 + game_window.width / 800) / 6, img=car_image, x=450, y=80))
@@ -98,36 +98,38 @@ def empty_room():
 	generation += 1
 	save_yet += 1
 	tot_time = int(time.time()) - start_time
-	print('gen {:d} completed, {:d} sec passed in total'.format(generation, tot_time))
+	print(f'gen {generation} completed, {tot_time} sec passed in total')
 	top = (nCars-Human)//2
 	best = [(k, model_scores[k]) for k in sorted(model_scores, key=model_scores.get, reverse=True)]
-	if all(s[1] == best[0][1] for s in best[:(len(best)*3)//4]) and not all(s[1] == best[0][1] for s in best):
-		best = [best[choice([s for s in range(len(best[:(len(best)*3)//4]))])] for x in range(top)]
-	if not all(s[1] == best[0][1] for s in best): best = best[:top]
+	most = (len(best)*3)//4
+	if all(s[1] == best[0][1] for s in best[:most]):
+		best = shuffle(best[:most])
+	best = best[:top]
 	print('best: ', best)
 	index = Human
 	models2 = {}
-	for i in range(100):
+	for i in range(50):
 			for x in range(100):
 				if f"{i},{x}" in models:
 					if all(f"{i},{x}" != elem[0] for elem in best):
 						best_model = models[f"{i},{x}"]
 						del models[f"{i},{x}"]
 
-						I = int(best[index%top][0][0])
+						bestindex = index % top
+						I = int(best[bestindex][0][0])
 						if randint(0, nCars*best[index % top][1]**1.5) == 0:
 							print('Model mutated')
-							mutated_model = generate_random_NNev_model(best_model, 1/((10+best[index % top][1])/10))
+							mutated_model = generate_random_NNev_model(best_model, 1/((10+best[bestindex][1])/10))
 							print(f"I before: {I}")
 							I += 1
-							for p in range(100):
+							for p in range(50):
 								if not (f"{p},0" in models or f"{p},1" in models or f"{p},0" in models2 or f"{p},1" in models2):
 									I = p
 									break
 							print(f"I after: {I}")
 						else:
-							mutated_model = gen_mutant(best_model, 1/((10+best[index % top][1])/10))
-						nextx = int(best[index%top][0][2])+1
+							mutated_model = gen_mutant(best_model, 1/((10+best[bestindex][1])/10))
+						nextx = int(best[bestindex][0][2])+1
 						for p in range(100):
 							if not (f"{I},{p}" in models or f"{I},{p}" in models2):
 								nextx = p
@@ -138,9 +140,7 @@ def empty_room():
 	if save_yet == 1:
 		path = currdir+fs+'resources'+fs+'models'
 		if os.path.exists(path): shutil.rmtree(path)
-		time.sleep(.05)
 		os.mkdir(path)
-		time.sleep(.05)
 		with open(currdir+fs+'resources'+fs+'models'+fs+'gen.log', 'w') as f:
 			f.write(f'[{generation}, {tot_time}]')
 		for key in models:
