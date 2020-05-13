@@ -79,7 +79,7 @@ def set_car():
 		car[0].NN.Interface = car[0].IFLocal
 
 	index = Human
-	for i in range(nModels):
+	for i in range(100):
 			for x in range(100):
 				if f"{i},{x}" in models:
 					car.append(Car(rotation = -90, scale=(game_window.height / 600 + game_window.width / 800) / 6, img=car_image, x=450, y=80))
@@ -107,19 +107,27 @@ def empty_room():
 	print('best: ', best)
 	index = Human
 	models2 = {}
-	for i in range(nModels):
+	for i in range(100):
 			for x in range(100):
 				if f"{i},{x}" in models:
 					if all(f"{i},{x}" != elem[0] for elem in best):
 						best_model = models[f"{i},{x}"]
 						del models[f"{i},{x}"]
+
+						I = int(best[index%top][0][0])
 						if randint(0, nCars*best[index % top][1]**1.5) == 0:
 							print('Model mutated')
 							mutated_model = generate_random_NNev_model(best_model, 1/((10+best[index % top][1])/10))
+							print(f"I before: {I}")
+							I += 1
+							for p in range(100):
+								if not (f"{p},0" in models or f"{p},1" in models or f"{p},0" in models2 or f"{p},1" in models2):
+									I = p
+									break
+							print(f"I after: {I}")
 						else:
 							mutated_model = gen_mutant(best_model, 1/((10+best[index % top][1])/10))
 						nextx = int(best[index%top][0][2])+1
-						I = best[index%top][0][0]
 						for p in range(100):
 							if not (f"{I},{p}" in models or f"{I},{p}" in models2):
 								nextx = p
