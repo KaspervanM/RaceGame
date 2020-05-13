@@ -1,6 +1,7 @@
 import pyglet
 from keras.models import load_model
 import os
+import shutil
 from collections import OrderedDict
 from classes.Interface import Interface
 from classes.Cars import Car
@@ -8,6 +9,7 @@ from classes.NN import *
 import sys
 import time
 from ast import literal_eval
+seed(777)
 def get_platform():
     platforms = {
         'linux1' : 'Linux',
@@ -32,7 +34,7 @@ inf = False
 Human = 0
 
 nModels = 4 * (1-Human)
-nCarsPerModel = 2 * (1-Human)
+nCarsPerModel = 4 * (1-Human)
 nCars = nModels * nCarsPerModel + Human
 car = []
 
@@ -62,12 +64,8 @@ def center_image(image):
 
 def save_model(tup):
 	path = currdir+fs+'resources'+fs+'models'+fs+f'type{tup[0][0]}'
-	try:
-		if not os.path.exists(currdir+fs+'resources'+fs+'models'): os.mkdir(currdir+fs+'resources'+fs+'models')
-		if not os.path.exists(path): os.mkdir(path)
-		tup[1].save(path+fs+f'model{tup[0][2]}.h5')
-	except OSError:
-		print ("Save or creation of the directory %s failed" % path)
+	if not os.path.exists(path): os.mkdir(path)
+	tup[1].save(path+fs+f'model{tup[0][2]}.h5')
 
 def set_car():
 	global car
@@ -80,7 +78,6 @@ def set_car():
 		car[0].NN = NNHuman()
 		car[0].NN.Interface = car[0].IFLocal
 
-	print(models)
 	index = Human
 	for i in range(nModels):
 			for x in range(100):
@@ -94,7 +91,6 @@ def set_car():
 					car[index].IFLocal.LevelLayer_height = LevelLayer.height
 					car[index].IFLocal.pixels = pixels
 					if not (i == 0 and Human) and isinstance(car[index].NN, NNev): car[index].NN.set_model()
-					print(f"{index}: {i}, {x}: {car[index].NN.model}")
 					index += 1
 
 def empty_room():
@@ -105,8 +101,8 @@ def empty_room():
 	print('gen {:d} completed, {:d} sec passed in total'.format(generation, tot_time))
 	top = (nCars-Human)//2
 	best = [(k, model_scores[k]) for k in sorted(model_scores, key=model_scores.get, reverse=True)]
-	if all(s[1] == best[0][1] for s in best[:len(best)//2+2]) and not all(s[1] == best[0][1] for s in best):
-		best = [best[choice([s for s in range(len(best[:len(best)//2+2]))])] for x in range(top)]
+	if all(s[1] == best[0][1] for s in best[:(len(best)*3)//4]) and not all(s[1] == best[0][1] for s in best):
+		best = [best[choice([s for s in range(len(best[:(len(best)*3)//4]))])] for x in range(top)]
 	if not all(s[1] == best[0][1] for s in best): best = best[:top]
 	print('best: ', best)
 	index = Human
@@ -131,9 +127,14 @@ def empty_room():
 						models2[f"{I},{nextx}"] = mutated_model
 						index += 1
 	models.update(models2)
-	if save_yet == 10:
+	if save_yet == 1:
+		path = currdir+fs+'resources'+fs+'models'
+		if os.path.exists(path): shutil.rmtree(path)
+		time.sleep(.05)
+		os.mkdir(path)
+		time.sleep(.05)
 		with open(currdir+fs+'resources'+fs+'models'+fs+'gen.log', 'w') as f:
-			f.write('[{:d}, {:d}]'.format(generation, tot_time))
+			f.write(f'[{generation}, {tot_time}]')
 		for key in models:
 			save_model((key, models[key]))
 		save_yet = 0
@@ -187,7 +188,6 @@ else:
 				if os.path.exists(f"{path}type{i}{fs}model{x}.h5"):
 					models[f"{i},{x}"] = load_model(f"{path}type{i}{fs}model{x}.h5")
 	model_scores = {}
-
 set_car()
 update()
 

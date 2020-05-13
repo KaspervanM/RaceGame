@@ -79,7 +79,7 @@ class Car(pyglet.sprite.Sprite):
 		key=self.IFLocal.key
 		X, Y = self.x, self.y
 		# labels
-		pyglet.text.Label('{num:d}, {num2:d}\tscore: {score:4.2f}\tvector:({v1:4.2f},{v2:4.2f})\nspeed:{speed:4.2f}\nacc={acc:4.2f}\trot:{rot:4.2f}\nLRUP: {l:d}{r:d}{u:d}{d:d}\n(x,y):({X:4.2f},{Y:4.2f})'.format(
+		pyglet.text.Label('{num:d}, {num2:d}\tscore: {score:d}\tvector:({v1:4.2f},{v2:4.2f})\nspeed:{speed:4.2f}\nacc={acc:4.2f}\trot:{rot:4.2f}\nLRUP: {l:d}{r:d}{u:d}{d:d}\n(x,y):({X:4.2f},{Y:4.2f})'.format(
 		 num=self.IFLocal.modelindex[0],num2=self.IFLocal.modelindex[1],v1=velocity[0], v2=velocity[1], speed=sqrt(velocity[0]**2 + velocity[1]**2), acc=acc, rot=rotation, l=key[0], r=key[1], u=key[2], d=key[3], X=X, Y=Y, score=self.score),
 		 font_name='Times New Roman', font_size=10, x=x, y=y).draw()
 
