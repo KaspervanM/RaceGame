@@ -151,10 +151,6 @@ def generate_random_NNev_model(pre_model = [] , mutation_rate = 0):
 			activation.append('sigmoid')
 		for x in range(randint(low=0, high=len(activation)//(8/mutation_rate)+1)):
 			activation[randint(0,len(nodes)-2)] = choice(activations)
-
-	#print(layers,'\n')
-	#print(nodes,'\n')
-	#print(activation,'\n')
 	model = Sequential()
 	add = model.add
 	add(Dense(nodes[0], input_dim=1))
@@ -163,14 +159,9 @@ def generate_random_NNev_model(pre_model = [] , mutation_rate = 0):
 		add(Dense(nodes[l]))
 		add(Activation(activation[l]))
 
-	#print(len(model.layers[1::2]),'\n')
-	#print([l.output_shape[1] for l in model.layers[1::2]],'\n')
-	#print([l.get_config()['activation'] for l in model.layers[1::2]],'\n')
-
 	return model
 
 def modify_weights(weight_val, mutation_rate):
-	#print('weight_val before: ', weight_val)
 	if weight_val.ndim == 2:
 		for x in range(len(weight_val)):
 			try:
@@ -182,20 +173,17 @@ def modify_weights(weight_val, mutation_rate):
 			rand_int = randint(0, len(weight_val)-1)
 			weight_val[rand_int] = normal(weight_val[rand_int], abs(weight_val[rand_int] * mutation_rate) if weight_val[rand_int] != 0 else mutation_rate)
 		except ValueError: weight_val[0] = normal(weight_val[0], abs(weight_val[0] * mutation_rate) if weight_val[0] != 0 else mutation_rate)
-	#print('weight_val after: ', weight_val)
 	return weight_val
 
 
 def gen_mutant(parent_model, mutation_rate):
 	new_weights = parent_model.get_weights()
-	#print('old new_weights[0]: ', new_weights[0])
 	for weight_array in new_weights:
 		num_weights = weight_array.size if weight_array.ndim == 1 else weight_array[0].size
 		num_weights_modified = binomial(num_weights, mutation_rate)
 		for i in range(num_weights_modified):
 			weight_array = modify_weights(weight_array, mutation_rate)
 	mutant = clone_model(parent_model)
-	#print('new new_weights[0]: ', new_weights[0])
 	mutant.set_weights(new_weights)
 	return mutant
 
@@ -205,10 +193,8 @@ class NNev(NN):
 		self.model: sequential()
 
 	def set_model(self):
-		print('mmodel set')
 		model = self.Interface.model
 		self.model = model
-		#print(self.model)
 
 	def run(self):
 		try:
@@ -219,12 +205,8 @@ class NNev(NN):
 			for i in range(10):
 				app(sqrt((iface.xc - vl[i][0])**2 + (iface.yc - vl[i][1])**2))
 
-
-			#print('input_data: ',input_data)
 			output = self.model.predict(nparray(input_data))[0]
-			#print('output: ',output)
 			output = around(output,  decimals=0)
-			#print('rounded output: ',output)
 
 			self.Interface.input = [output[0],output[1],output[2],output[3]]
 		except IndexError:
