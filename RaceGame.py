@@ -103,7 +103,8 @@ def empty_room():
 	best = [(k, model_scores[k]) for k in sorted(model_scores, key=model_scores.get, reverse=True)]
 	most = (len(best)*3)//4
 	if all(s[1] == best[0][1] for s in best[:most]):
-		best = shuffle(best[:most])
+		best = best[:most]
+		shuffle(best)
 	best = best[:top]
 	print('best: ', best)
 	index = Human
