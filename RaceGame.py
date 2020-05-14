@@ -34,8 +34,8 @@ inf = False
 
 Human = 0
 
-nModels = 6 * (1-Human)
-nCarsPerModel = 3 * (1-Human)
+nModels = 4 * (1-Human)
+nCarsPerModel = 4 * (1-Human)
 nCars = nModels * nCarsPerModel + Human
 car = []
 
@@ -101,7 +101,7 @@ def empty_room():
 	save_yet += 1
 	tot_time = int(time.time()) - start_time
 	print(f'gen {generation} completed, {tot_time} sec passed in total')
-	top = (nCars-Human)//2
+	top = (nCars-Human)//3
 	best = [(k, model_scores[k]) for k in sorted(model_scores, key=model_scores.get, reverse=True)]
 	most = (len(best)*3)//4
 	if all(s[1] == best[0][1] for s in best[:most]):
@@ -115,10 +115,10 @@ def empty_room():
 			for x in range(100):
 				if f"{i},{x}" in models:
 					if all(f"{i},{x}" != elem[0] for elem in best):
-						best_model = models[f"{i},{x}"]
+						bestindex = index % top
+						best_model = models[best[bestindex][0]]
 						del models[f"{i},{x}"]
 
-						bestindex = index % top
 						I = int(best[bestindex][0][0])
 						if randint(0, nCars*best[index % top][1]**1.5) == 0:
 							print('Model mutated')
