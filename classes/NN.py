@@ -183,9 +183,10 @@ def gen_mutant(parent_model, mutation_rate):
 		num_weights_modified = binomial(num_weights, mutation_rate)
 		for i in range(num_weights_modified):
 			weight_array = modify_weights(weight_array, mutation_rate)
-	mutant = clone_model(parent_model)
-	mutant.set_weights(new_weights)
-	return mutant
+	#mutant = clone_model(parent_model)
+	#mutant.set_weights(new_weights)
+	parent_model.set_weights(new_weights)
+	return parent_model #mutant
 
 class NNev(NN):
 	def __init__(self):

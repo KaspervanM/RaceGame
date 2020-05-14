@@ -1,7 +1,8 @@
 import pyglet
 from keras.models import load_model
-import os
-import shutil
+from os import mkdir
+from os.path import exists
+from shutil import rmtree
 from collections import OrderedDict
 from classes.Interface import Interface
 from classes.Cars import Car
@@ -33,8 +34,8 @@ inf = False
 
 Human = 0
 
-nModels = 4 * (1-Human)
-nCarsPerModel = 4 * (1-Human)
+nModels = 6 * (1-Human)
+nCarsPerModel = 3 * (1-Human)
 nCars = nModels * nCarsPerModel + Human
 car = []
 
@@ -64,7 +65,7 @@ def center_image(image):
 
 def save_model(tup):
 	path = currdir+fs+'resources'+fs+'models'+fs+f'type{tup[0][0]}'
-	if not os.path.exists(path): os.mkdir(path)
+	if not exists(path): mkdir(path)
 	tup[1].save(path+fs+f'model{tup[0][2]}.h5')
 
 def set_car():
@@ -79,7 +80,7 @@ def set_car():
 		car[0].NN.Interface = car[0].IFLocal
 
 	index = Human
-	for i in range(100):
+	for i in range(50):
 			for x in range(100):
 				if f"{i},{x}" in models:
 					car.append(Car(rotation = -90, scale=(game_window.height / 600 + game_window.width / 800) / 6, img=car_image, x=450, y=80))
@@ -98,36 +99,39 @@ def empty_room():
 	generation += 1
 	save_yet += 1
 	tot_time = int(time.time()) - start_time
-	print('gen {:d} completed, {:d} sec passed in total'.format(generation, tot_time))
+	print(f'gen {generation} completed, {tot_time} sec passed in total')
 	top = (nCars-Human)//2
 	best = [(k, model_scores[k]) for k in sorted(model_scores, key=model_scores.get, reverse=True)]
-	if all(s[1] == best[0][1] for s in best[:(len(best)*3)//4]) and not all(s[1] == best[0][1] for s in best):
-		best = [best[choice([s for s in range(len(best[:(len(best)*3)//4]))])] for x in range(top)]
-	if not all(s[1] == best[0][1] for s in best): best = best[:top]
+	most = (len(best)*3)//4
+	if all(s[1] == best[0][1] for s in best[:most]):
+		best = best[:most]
+		shuffle(best)
+	best = best[:top]
 	print('best: ', best)
 	index = Human
 	models2 = {}
-	for i in range(100):
+	for i in range(50):
 			for x in range(100):
 				if f"{i},{x}" in models:
 					if all(f"{i},{x}" != elem[0] for elem in best):
 						best_model = models[f"{i},{x}"]
 						del models[f"{i},{x}"]
 
-						I = int(best[index%top][0][0])
+						bestindex = index % top
+						I = int(best[bestindex][0][0])
 						if randint(0, nCars*best[index % top][1]**1.5) == 0:
 							print('Model mutated')
-							mutated_model = generate_random_NNev_model(best_model, 1/((10+best[index % top][1])/10))
+							mutated_model = generate_random_NNev_model(best_model, 1/((10+best[bestindex][1])/10))
 							print(f"I before: {I}")
 							I += 1
-							for p in range(100):
+							for p in range(50):
 								if not (f"{p},0" in models or f"{p},1" in models or f"{p},0" in models2 or f"{p},1" in models2):
 									I = p
 									break
 							print(f"I after: {I}")
 						else:
-							mutated_model = gen_mutant(best_model, 1/((10+best[index % top][1])/10))
-						nextx = int(best[index%top][0][2])+1
+							mutated_model = gen_mutant(best_model, 1/((10+best[bestindex][1])/10))
+						nextx = int(best[bestindex][0][2])+1
 						for p in range(100):
 							if not (f"{I},{p}" in models or f"{I},{p}" in models2):
 								nextx = p
@@ -135,12 +139,12 @@ def empty_room():
 						models2[f"{I},{nextx}"] = mutated_model
 						index += 1
 	models.update(models2)
-	if save_yet == 1:
+	if save_yet == 10:
 		path = currdir+fs+'resources'+fs+'models'
-		if os.path.exists(path): shutil.rmtree(path)
-		time.sleep(.05)
-		os.mkdir(path)
-		time.sleep(.05)
+		if exists(path): rmtree(path, ignore_errors=True)
+		while exists(path): # check if it exists
+			pass
+		mkdir(path)
 		with open(currdir+fs+'resources'+fs+'models'+fs+'gen.log', 'w') as f:
 			f.write(f'[{generation}, {tot_time}]')
 		for key in models:
@@ -191,9 +195,9 @@ else:
 		generation = data[0]
 		start_time = int(time.time())-data[1]
 	for i in range(nModels):
-		if os.path.exists(f"{path}type{i}"):
+		if exists(f"{path}type{i}"):
 			for x in range(100):
-				if os.path.exists(f"{path}type{i}{fs}model{x}.h5"):
+				if exists(f"{path}type{i}{fs}model{x}.h5"):
 					models[f"{i},{x}"] = load_model(f"{path}type{i}{fs}model{x}.h5")
 	model_scores = {}
 set_car()
