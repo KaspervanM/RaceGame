@@ -66,7 +66,7 @@ def center_image(image):
 def save_model(tup):
 	path = currdir+fs+'resources'+fs+'models'+fs+f'type{tup[0][0]}'
 	if not exists(path): mkdir(path)
-	tup[1].save(path+fs+f'model{tup[0][2]}.h5')
+	tup[1].save(path+fs+f'model{tup[0][2:]}.h5')
 
 def set_car():
 	global car
