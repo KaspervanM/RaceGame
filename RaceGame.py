@@ -64,9 +64,10 @@ def center_image(image):
 	image.anchor_y = image.height // 2
 
 def save_model(tup):
-	path = currdir+fs+'resources'+fs+'models'+fs+f'type{tup[0][0]}'
+	kompos = tup[0].find(',')
+	path = currdir+fs+'resources'+fs+'models'+fs+f'type{tup[0][:kompos]}'
 	if not exists(path): mkdir(path)
-	tup[1].save(path+fs+f'model{tup[0][2:]}.h5')
+	tup[1].save(path+fs+f'model{tup[0][kompos+1:]}.h5')
 
 def set_car():
 	global car
