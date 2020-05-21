@@ -7,11 +7,17 @@ from os.path import exists
 from shutil import rmtree
 
 import pyglet
-from classes.Cars import Car
-from classes.NN import NNLongest  # skipcq: PYL-W0611
-from classes.NN import NNev, NNHuman, gen_mutant, generate_random_NNev_model
 from keras.models import load_model
-from numpy.random import randint, seed, shuffle
+from numpy.random import randint
+from numpy.random import seed
+from numpy.random import shuffle
+
+from classes.Cars import Car
+from classes.NN import gen_mutant
+from classes.NN import generate_random_NNev_model
+from classes.NN import NNev
+from classes.NN import NNHuman
+from classes.NN import NNLongest  # skipcq: PYL-W0611
 
 seed(10)
 
