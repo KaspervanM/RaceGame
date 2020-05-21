@@ -311,6 +311,8 @@ class NNev(NN):
             output = self.model.predict(nparray(input_data))[0]
             output = around(output, decimals=0)
 
-            self.Interface.inputkeys = [output[0], output[1], output[2], output[3]]
+            self.Interface.inputkeys = [
+                output[0], output[1], output[2], output[3]
+            ]
         except IndexError:
             pass
