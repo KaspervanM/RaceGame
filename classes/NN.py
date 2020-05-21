@@ -3,6 +3,8 @@ from math import atan2
 from math import hypot
 from math import pi
 from math import radians
+
+import numpy as np
 from keras.layers import Activation
 from keras.layers import Dense
 from keras.models import clone_model
@@ -131,18 +133,18 @@ class NNLongest(NN):
             diffs = AngleBetween(radians(90 - rotations), angles)
             if shortest[0] > self.Interface.carWidth:
                 if diffl > 0:
-                    self.Interface.input = [1, 0, 1, 0]
+                    self.Interface.inputkeys = [1, 0, 1, 0]
                 elif diffl < 0:
-                    self.Interface.input = [0, 1, 1, 0]
+                    self.Interface.inputkeys = [0, 1, 1, 0]
                 else:
-                    self.Interface.input = [0, 0, 1, 0]
+                    self.Interface.inputkeys = [0, 0, 1, 0]
             else:
                 if diffs < 0:
-                    self.Interface.input = [1, 0, 1, 0]
+                    self.Interface.inputkeys = [1, 0, 1, 0]
                 elif diffs > 0:
-                    self.Interface.input = [0, 1, 1, 0]
+                    self.Interface.inputkeys = [0, 1, 1, 0]
                 else:
-                    self.Interface.input = [0, 0, 1, 0]
+                    self.Interface.inputkeys = [0, 0, 1, 0]
 
 
 class NNHuman(NN):
@@ -151,7 +153,7 @@ class NNHuman(NN):
         self.output = [0, 0, 0, 0]
 
     def run(self):
-        self.Interface.input = self.output
+        self.Interface.inputkeys = self.output
 
 
 def generate_random_NNev_model(pre_model=0, mutation_rate=0):
@@ -305,10 +307,10 @@ class NNev(NN):
                             hypot((iface.xc - vl[i][0]),
                                   (iface.yc - vl[i][1])))))
 
-            # print(f"input: {input_data}")
+            # print(f"inputkeys: {input_data}")
             output = self.model.predict(nparray(input_data))[0]
             output = around(output, decimals=0)
 
-            self.Interface.input = [output[0], output[1], output[2], output[3]]
+            self.Interface.inputkeys = [output[0], output[1], output[2], output[3]]
         except IndexError:
             pass
