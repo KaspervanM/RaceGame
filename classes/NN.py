@@ -3,8 +3,6 @@ from math import atan2
 from math import hypot
 from math import pi
 from math import radians
-
-import numpy as np
 from keras.layers import Activation
 from keras.layers import Dense
 from keras.models import clone_model
