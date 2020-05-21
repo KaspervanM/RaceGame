@@ -51,7 +51,7 @@ showmodel = False
 Human = 0
 
 nModels = 3 * (1 - Human)
-nCarsPerModel = 2 * (1 - Human)
+nCarsPerModel = 3 * (1 - Human)
 nCars = nModels * nCarsPerModel + Human
 car = []
 
