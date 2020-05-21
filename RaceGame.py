@@ -51,7 +51,7 @@ showmodel = False
 Human = 0
 
 nModels = 3 * (1 - Human)
-nCarsPerModel = 2 * (1 - Human)
+nCarsPerModel = 3 * (1 - Human)
 nCars = nModels * nCarsPerModel + Human
 car = []
 
@@ -257,7 +257,8 @@ if any(inp == ans for ans in ["no", "n", "No", "N"]):
         model = generate_random_NNev_model()
         print(modtype)
         for modnum in range(nCarsPerModel):
-            models[f"{modtype},{modnum}"] = gen_mutant(gen_mutant(model, 1.0), 1.0)
+            models[f"{modtype},{modnum}"] = gen_mutant(gen_mutant(model, 1.0),
+                                                       1.0)
 else:
     with open(modelpath + "gen.log", "r") as logfile:
         data = literal_eval(logfile.read())
