@@ -1,23 +1,13 @@
 import sys
-from math import atan2
-from math import hypot
-from math import pi
-from math import radians
+from math import atan2, hypot, pi, radians
 
 import numpy as np
-from keras.layers import Activation
-from keras.layers import Dense
-from keras.models import clone_model
-from keras.models import Sequential
+from classes.Interface import Interface
+from keras.layers import Activation, Dense
+from keras.models import Sequential, clone_model
 from numpy import around
 from numpy import array as nparray
-from numpy.random import binomial
-from numpy.random import choice
-from numpy.random import normal
-from numpy.random import randint
-from numpy.random import seed
-
-from classes.Interface import Interface
+from numpy.random import binomial, choice, normal, randint, seed
 
 seed(10)
 
