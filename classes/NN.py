@@ -180,7 +180,10 @@ def generate_random_NNev_model(pre_model=0, mutation_rate=0):
     else:
         premodel = [
             len(pre_model.layers[1::2]),
-            [layerelem.output_shape[1] for layerelem in pre_model.layers[1::2]],
+            [
+                layerelem.output_shape[1]
+                for layerelem in pre_model.layers[1::2]
+            ],
             [
                 layerelem.get_config()["activation"]
                 for layerelem in pre_model.layers[1::2]
@@ -197,28 +200,34 @@ def generate_random_NNev_model(pre_model=0, mutation_rate=0):
         nodes = premodel[1]
         if len(nodes) < layers:
             nodes.pop()
-            nodes.extend(
-                [randint(low=20, high=100) for p in range(layers - len(nodes))]
-            )
+            nodes.extend([
+                randint(low=20, high=100) for p in range(layers - len(nodes))
+            ])
             nodes.append(4)
         elif len(nodes) > layers:
-            nodes = nodes[: -(len(nodes) - layers + 1)]
+            nodes = nodes[:-(len(nodes) - layers + 1)]
             nodes.append(4)
         if binomial(1, mutation_rate):
-            for _ in range(randint(low=0, high=1 + len(nodes) // (8 / mutation_rate))):
-                nodes[randint(0, len(nodes) - 1)] = randint(min(nodes), max(nodes) - 1)
+            for _ in range(
+                    randint(low=0,
+                            high=1 + len(nodes) // (8 / mutation_rate))):
+                nodes[randint(0,
+                              len(nodes) - 1)] = randint(
+                                  min(nodes),
+                                  max(nodes) - 1)
 
         activation = premodel[2]
         if len(activation) < layers:
             activation.pop()
             activation.extend(
-                [choice(activations) for p in range(layers - len(activation))]
-            )
+                [choice(activations) for p in range(layers - len(activation))])
             activation.append("sigmoid")
         elif len(activation) > layers:
-            activation = activation[: -(len(activation) - layers + 1)]
+            activation = activation[:-(len(activation) - layers + 1)]
             activation.append("sigmoid")
-        for _ in range(randint(low=0, high=len(activation) // (8 / mutation_rate) + 1)):
+        for _ in range(
+                randint(low=0,
+                        high=len(activation) // (8 / mutation_rate) + 1)):
             activation[randint(0, len(nodes) - 2)] = choice(activations)
     model = Sequential()
     add = model.add
@@ -239,28 +248,25 @@ def modify_weights(weight_val, mutation_rate):
                 weight_val[count][rand_int] = normal(
                     elem[rand_int],
                     abs(elem[rand_int] * mutation_rate)
-                    if elem[rand_int] != 0
-                    else mutation_rate,
+                    if elem[rand_int] != 0 else mutation_rate,
                 )
             except ValueError:
                 elem[0] = normal(
-                    elem[0], abs(elem[0] * mutation_rate) if elem[0] != 0 else 1
-                )
+                    elem[0],
+                    abs(elem[0] * mutation_rate) if elem[0] != 0 else 1)
     else:
         try:
             rand_int = randint(0, len(weight_val) - 1)
             weight_val[rand_int] = normal(
                 weight_val[rand_int],
                 abs(weight_val[rand_int] * mutation_rate)
-                if weight_val[rand_int] != 0
-                else mutation_rate,
+                if weight_val[rand_int] != 0 else mutation_rate,
             )
         except ValueError:
             weight_val[0] = normal(
                 weight_val[0],
-                abs(weight_val[0] * mutation_rate)
-                if weight_val[0] != 0
-                else mutation_rate,
+                abs(weight_val[0] *
+                    mutation_rate) if weight_val[0] != 0 else mutation_rate,
             )
     return weight_val
 
@@ -268,9 +274,8 @@ def modify_weights(weight_val, mutation_rate):
 def gen_mutant(parent_model, mutation_rate):
     new_weights = parent_model.get_weights()
     for weight_array in new_weights:
-        num_weights = (
-            weight_array.size if weight_array.ndim == 1 else weight_array[0].size
-        )
+        num_weights = (weight_array.size
+                       if weight_array.ndim == 1 else weight_array[0].size)
         num_weights_modified = binomial(num_weights, mutation_rate)
         for _ in range(num_weights_modified):
             weight_array = modify_weights(weight_array, mutation_rate)
@@ -296,12 +301,18 @@ class NNev(NN):
             input_data = [round(iface.speed, 2)]
             app = input_data.append
             for i in range(8):
-                app(int(round(hypot((iface.xc - vl[i][0]), (iface.yc - vl[i][1])))))
+                app(
+                    int(
+                        round(
+                            hypot((iface.xc - vl[i][0]),
+                                  (iface.yc - vl[i][1])))))
 
             # print(f"inputkeys: {input_data}")
             output = self.model.predict(nparray(input_data))[0]
             output = around(output, decimals=0)
 
-            self.Interface.inputkeys = [output[0], output[1], output[2], output[3]]
+            self.Interface.inputkeys = [
+                output[0], output[1], output[2], output[3]
+            ]
         except IndexError:
             pass

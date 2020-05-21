@@ -38,10 +38,10 @@ def get_platform():
 fs = "\\" if get_platform() == "Windows" else "/"
 currdir = sys.path[0]
 car_image = pyglet.image.load(currdir + fs + "resources" + fs + "car.png")
-Level = pyglet.image.load(currdir + fs + "resources" + fs + "Level.png").get_texture()
-LevelLayer = pyglet.image.load(
-    currdir + fs + "resources" + fs + "LevelLayerWscore2.png"
-).get_texture()
+Level = pyglet.image.load(currdir + fs + "resources" + fs +
+                          "Level.png").get_texture()
+LevelLayer = pyglet.image.load(currdir + fs + "resources" + fs +
+                               "LevelLayerWscore2.png").get_texture()
 
 b = True
 show_cars = True
@@ -102,8 +102,7 @@ def set_car():
                 img=car_image,
                 x=450,
                 y=80,
-            )
-        )
+            ))
         car[0].IFLocal.LevelLayer_width = LevelLayer.width
         car[0].IFLocal.LevelLayer_height = LevelLayer.height
         car[0].IFLocal.pixels = pixels
@@ -117,12 +116,12 @@ def set_car():
                 car.append(
                     Car(
                         rotation=-90,
-                        scale=(game_window.height / 600 + game_window.width / 800) / 6,
+                        scale=(game_window.height / 600 +
+                               game_window.width / 800) / 6,
                         img=car_image,
                         x=450,
                         y=80,
-                    )
-                )
+                    ))
 
                 car[index].nViewlines = 8
                 car[index].IFLocal.modelindex = [i, x]
@@ -141,10 +140,8 @@ def empty_room():
     tot_time = int(time.time()) - start_time
     print(f"gen {generation} completed, {tot_time} sec passed in total")
     top = ceil((nCars - Human) / 2)
-    best = [
-        (k, model_scores[k])
-        for k in sorted(model_scores, key=model_scores.get, reverse=True)
-    ]
+    best = [(k, model_scores[k])
+            for k in sorted(model_scores, key=model_scores.get, reverse=True)]
 
     indexes = [0]
     app = indexes.append
@@ -152,9 +149,9 @@ def empty_room():
         if best[n - 1] != best[n]:
             app(n)
     for x in range(len(indexes) - 1):
-        copy = best[indexes[x] : indexes[x + 1]]
+        copy = best[indexes[x]:indexes[x + 1]]
         shuffle(copy)
-        best[indexes[x] : indexes[x + 1]] = copy
+        best[indexes[x]:indexes[x + 1]] = copy
 
     best = best[:top]
     print("best: ", best)
@@ -170,21 +167,20 @@ def empty_room():
 
                     mutation_rate = 1 / ((25 + best[bestindex][1]) / 25)
                     nexti = int(best[bestindex][0][0])
-                    if randint(0, int(nCars * (best[index % top][1] + 1) ** 1.5)) == 0:
+                    if randint(0, int(nCars *
+                                      (best[index % top][1] + 1)**1.5)) == 0:
                         print("Model mutated")
                         mutated_model = gen_mutant(
-                            generate_random_NNev_model(best_model, mutation_rate),
+                            generate_random_NNev_model(best_model,
+                                                       mutation_rate),
                             mutation_rate,
                         )
                         print(f"nexti before: {nexti}")
                         nexti += 1
                         for p in range(50):
-                            if not (
-                                f"{p},0" in models
-                                or f"{p},1" in models
-                                or f"{p},0" in models2
-                                or f"{p},1" in models2
-                            ):
+                            if not (f"{p},0" in models or f"{p},1" in models
+                                    or f"{p},0" in models2
+                                    or f"{p},1" in models2):
                                 nexti = p
                                 break
                         print(f"nexti after: {nexti}")
@@ -192,7 +188,8 @@ def empty_room():
                         mutated_model = gen_mutant(best_model, mutation_rate)
                     nextx = int(best[bestindex][0][2]) + 1
                     for p in range(100):
-                        if not (f"{nexti},{p}" in models or f"{nexti},{p}" in models2):
+                        if not (f"{nexti},{p}" in models
+                                or f"{nexti},{p}" in models2):
                             nextx = p
                             break
                     models2[f"{nexti},{nextx}"] = mutated_model
@@ -226,9 +223,8 @@ def collision(index):
                 y=80,
             ),
         )
-        car[0].nViewlines = 10 * (
-            0 if Human == 1 and index == 0 else 1
-        )  # (index+1-Human) * 4
+        car[0].nViewlines = 10 * (0 if Human == 1 and index == 0 else 1
+                                  )  # (index+1-Human) * 4
         car[0].IFLocal.LevelLayer_width = LevelLayer.width
         car[0].IFLocal.LevelLayer_height = LevelLayer.height
         car[0].IFLocal.pixels = pixels
@@ -236,8 +232,8 @@ def collision(index):
         car[0].NN.Interface = car[0].IFLocal
     else:
         model_scores[
-            f"{car[index].IFLocal.modelindex[0]},{car[index].IFLocal.modelindex[1]}"
-        ] = car[index].score
+            f"{car[index].IFLocal.modelindex[0]},{car[index].IFLocal.modelindex[1]}"] = car[
+                index].score
         car[index] = None
 
     print("boem", end="\r")
@@ -250,7 +246,8 @@ game_window = pyglet.window.Window(Level.width, Level.height)
 
 pixels = getArray(LevelLayer)
 inp = input("use previous models? ")
-while all(inp != ans for ans in ["yes", "no", "y", "n", "Yes", "No", "Y", "N"]):
+while all(inp != ans
+          for ans in ["yes", "no", "y", "n", "Yes", "No", "Y", "N"]):
     inp = input("use previous models? ")
 
 if any(inp == ans for ans in ["no", "n", "No", "N"]):
@@ -260,7 +257,8 @@ if any(inp == ans for ans in ["no", "n", "No", "N"]):
         model = generate_random_NNev_model()
         print(modtype)
         for modnum in range(nCarsPerModel):
-            models[f"{modtype},{modnum}"] = gen_mutant(gen_mutant(model, 1.0), 1.0)
+            models[f"{modtype},{modnum}"] = gen_mutant(gen_mutant(model, 1.0),
+                                                       1.0)
 else:
     with open(modelpath + "gen.log", "r") as logfile:
         data = literal_eval(logfile.read())
@@ -271,8 +269,7 @@ else:
             for modnum in range(100):
                 if exists(f"{modelpath}type{modtype}{fs}model{modnum}.h5"):
                     models[f"{modtype},{modnum}"] = load_model(
-                        f"{modelpath}type{modtype}{fs}model{modnum}.h5"
-                    )
+                        f"{modelpath}type{modtype}{fs}model{modnum}.h5")
     model_scores = {}
 set_car()
 update()
@@ -329,21 +326,21 @@ def on_draw():
         if elem:
             if show_cars:
                 elem.draw()
-                elem.draw_info(10, game_window.height - 20 * count - 20, not inf)
+                elem.draw_info(10, game_window.height - 20 * count - 20,
+                               not inf)
                 if showmodel and car[0]:
                     car[0].show_model()
                 pyglet.text.Label(
-                    "{:d}, {:d}".format(
-                        elem.IFLocal.modelindex[0], elem.IFLocal.modelindex[1]
-                    ),
+                    "{:d}, {:d}".format(elem.IFLocal.modelindex[0],
+                                        elem.IFLocal.modelindex[1]),
                     font_name="Times New Roman",
                     font_size=10,
                     x=elem.x,
                     y=elem.y,
                 ).draw()
-            if elem.check_collision(elem.hitbox) or (
-                not (Human and count == 0) and elem.unusedframes > 100
-            ):
+            if elem.check_collision(
+                    elem.hitbox) or (not (Human and count == 0)
+                                     and elem.unusedframes > 100):
                 collision(count)
 
 

@@ -17,21 +17,21 @@ class Interface:
     ]
 
     def __init__(
-        self,
-        rotations,
-        inputkeys,
-        key,
-        viewline,
-        xc,
-        yc,
-        LevelLayer_width,
-        LevelLayer_height,
-        pixels,
-        score,
-        carWidth,
-        speed,
-        modelindex,
-        model,
+            self,
+            rotations,
+            inputkeys,
+            key,
+            viewline,
+            xc,
+            yc,
+            LevelLayer_width,
+            LevelLayer_height,
+            pixels,
+            score,
+            carWidth,
+            speed,
+            modelindex,
+            model,
     ):
         self.rotations = rotations  # 0
         self.inputkeys = inputkeys  # [0,0,0,0]
